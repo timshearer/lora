@@ -1,0 +1,30 @@
+// A decoder for the LoRaWan_OnBoardGPS_Air530 example for the Heltec CubeCell HTCC-AB02S board.  For Chirpstack/TTN.
+// https://github.com/HelTecAutomation/CubeCell-Arduino/blob/master/libraries/LoRa/examples/LoRaWAN/LoRaWAN_Sensors/LoRaWan_OnBoardGPS_Air530Z/LoRaWan_OnBoardGPS_Air530Z.ino
+
+
+function Decode(fPort, bytes) {
+    // Decode an uplink message from a buffer
+    // (array) of bytes to an object of fields.
+
+    var bat = (bytes[24] << 8 | bytes[25]);
+  
+    return {
+ 		latitude: bytesToFloat(bytes.slice(0, 4)),
+        longitude: bytesToFloat(bytes.slice(4, 8)),
+        altitude: bytesToFloat(bytes.slice(8, 12)),
+        course: bytesToFloat(bytes.slice(12, 16)),
+        speed: bytesToFloat(bytes.slice(16, 20)),
+        hdop: bytesToFloat(bytes.slice(20, 24)),
+        battery: bat 
+    };
+}
+
+function bytesToFloat(bytes) {
+    //LSB Format (least significant byte first).
+    var bits = bytes[3]<<24 | bytes[2]<<16 | bytes[1]<<8 | bytes[0];
+    var sign = (bits>>>31 === 0) ? 1.0 : -1.0;
+    var e = bits>>>23 & 0xff;
+    var m = (e === 0) ? (bits & 0x7fffff)<<1 : (bits & 0x7fffff) | 0x800000;
+    var f = sign * m * Math.pow(2, e - 150);
+    return f;
+}

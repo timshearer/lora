@@ -9,7 +9,7 @@ function Decode(fPort, bytes) {
     var bat = (bytes[24] << 8 | bytes[25]);
   
     return {
- 		latitude: bytesToFloat(bytes.slice(0, 4)),
+        latitude: bytesToFloat(bytes.slice(0, 4)),
         longitude: bytesToFloat(bytes.slice(4, 8)),
         altitude: bytesToFloat(bytes.slice(8, 12)),
         course: bytesToFloat(bytes.slice(12, 16)),
